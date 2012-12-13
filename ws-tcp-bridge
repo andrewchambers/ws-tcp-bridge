@@ -39,6 +39,20 @@ function initSocketCallbacks(state,ws,s) {
 		s.end();
 	});
 
+	ws.on('error', function (e) {
+		ws.removeAllListeners('close');
+		s.removeAllListeners('close');
+		ws.close();
+		s.end();
+	});
+
+	s.on('error', function (e) {
+		ws.removeAllListeners('close');
+		s.removeAllListeners('close');
+		ws.close();
+		s.end();
+	});
+
 	s.on('connect', function() { 
 		state.sReady = true;
 		flushSocketBuffer();
