@@ -1,6 +1,6 @@
 {
   "name": "ws-tcp-bridge",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Proxy between websocket and tcp servers",
   "bin" : { "ws-tcp-bridge" : "./ws-tcp-bridge" },
   "dependencies": {
