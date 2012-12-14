@@ -1,13 +1,14 @@
 ws-tcp-bridge
 =============
 
+A websocket to tcp proxy server, using nodejs which bridges websockets and tcp servers in either direction.
+
+
 INSTALL -
 
  npm install ws-tcp-bridge
 
-WIP - the actual code is extremely simple, but not tested well, feel free to help.
-
-A proxy server, using nodejs which bridges websockets and tcp servers in either direction.
+WIP - the actual code is extremely simple, but not tested well (YET), feel free to help.
 
 example - 
 
