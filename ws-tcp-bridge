@@ -13,6 +13,8 @@ var argv = require('optimist')
 			.describe('method','either tcp2ws or ws2tcp').argv;
 
 
+var wsMask = (argv.method == 'tcp2ws');
+
 function initSocketCallbacks(state,ws,s) {
 
 	function flushSocketBuffer() {
@@ -24,7 +26,7 @@ function initSocketCallbacks(state,ws,s) {
 
 	function flushWebsocketBuffer() {
 		if(state.wsBuffer.length > 0) {
-			ws.send(Buffer.concat(state.wsBuffer));
+			ws.send(Buffer.concat(state.wsBuffer),{binary: true,mask: wsMask});
 		}
 		state.wsBuffer = null;
 	};
@@ -40,6 +42,8 @@ function initSocketCallbacks(state,ws,s) {
 	});
 
 	ws.on('error', function (e) {
+		console.log('websocket error');
+		console.log(e);
 		ws.removeAllListeners('close');
 		s.removeAllListeners('close');
 		ws.close();
@@ -47,13 +51,15 @@ function initSocketCallbacks(state,ws,s) {
 	});
 
 	s.on('error', function (e) {
+		console.log('socket error');
+		console.log(e);
 		ws.removeAllListeners('close');
 		s.removeAllListeners('close');
 		ws.close();
 		s.end();
 	});
 
-	s.on('connect', function() { 
+	s.on('connect', function() {
 		state.sReady = true;
 		flushSocketBuffer();
 	});
@@ -64,11 +70,11 @@ function initSocketCallbacks(state,ws,s) {
 	});
 
 	s.on('data', function(data) {
-		
+
 		if(! state.wsReady) {
 			state.wsBuffer.push(data);
 		} else {
-			ws.send(data);
+			ws.send(data,{binary: true,mask: wsMask});
 		}
 	});
 
@@ -84,6 +90,7 @@ function initSocketCallbacks(state,ws,s) {
 function tcp2ws() {
 	console.log('proxy mode tcp -> ws');
 	console.log('forwarding port ' + argv.lport + ' to ' + argv.rhost);
+
 	var server = net.createServer(function(s) {
 		var ws = new ws_module(argv.rhost);
 		
@@ -99,8 +106,10 @@ function tcp2ws() {
 }
 
 function ws2tcp() {
+
 	console.log('proxy mode ws -> tcp');
 	console.log('forwarding port ' + argv.lport + ' to ' + argv.rhost);
+
 	wss = new ws_module.Server({port: argv.lport});
 	wss.on('connection', function(ws) {
 		var addr_port = argv.rhost.split(':');

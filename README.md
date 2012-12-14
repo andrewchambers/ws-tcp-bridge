@@ -18,7 +18,7 @@ proxy mode ws -> tcp
 forwarding port 8080 to 127.0.0.1:8081
 
 
-$ ws-tcp-bridge --method=tcp2ws --lport=8080  --rhost=127.0.0.1:8081
+$ ws-tcp-bridge --method=tcp2ws --lport=8080  --rhost=ws://127.0.0.1:8081
 
 proxy mode tcp -> ws
 forwarding port 8080 to 127.0.0.1:8081
