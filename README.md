@@ -1,13 +1,16 @@
 ws-tcp-bridge
 =============
 
+Project status:
+ currently not in use  so i dont know if its up to date with its dependencies. Feel free to use the code as an example however
+ the only licensing restriction is let me know if its been helpful! 
+
 A websocket to tcp proxy server, using nodejs which bridges websockets and tcp servers in either direction.
 
 WIP - the actual code is extremely simple, but not tested well (YET), feel free to help.
 	  working examples will be provided with some real services when I get time. 
-
 *NOTE* - currently I only support binary ws frames which isnt implemented in alot of browsers...
-A workaround is simple to implement, but will not be done until after christmas 2012.
+A workaround is simple to implement.
 
 INSTALL -
 
