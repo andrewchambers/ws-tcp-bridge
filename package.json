@@ -4,8 +4,8 @@
   "description": "Proxy between websocket and tcp servers",
   "bin" : { "ws-tcp-bridge" : "./ws-tcp-bridge" },
   "dependencies": {
-    "optimist": "~0.3.5",
-    "ws": "~0.4.23"
+    "optimist": "~0.6.1",
+    "ws": "~1.1.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -22,5 +22,5 @@
     "tcp"
   ],
   "author": "andrewchamberss@gmail.com",
-  "license": "BSD"
+  "license": "BSD-3-Clause"
 }
