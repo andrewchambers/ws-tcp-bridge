@@ -2,6 +2,8 @@
 
 var ws_module = require('ws');
 var net = require('net');
+var fs = require('fs');
+var https = require('https');
 
 var argv = require('optimist')
 			.usage('Forward tcp connections to websocket servers, or websocket connections to tcp servers.')
@@ -10,7 +12,10 @@ var argv = require('optimist')
 			.demand('rhost')
 			.describe('rhost','address to forward the connection to.')
 			.demand('method')
-			.describe('method','either tcp2ws or ws2tcp').argv;
+			.describe('method','either tcp2ws or ws2tcp')
+			.describe('key', 'Inform your security key')
+			.describe('cert', 'Inform your security cert')
+			.describe('insecure', 'Accept unverified remote').argv;
 
 
 var wsMask = (argv.method == 'tcp2ws');
@@ -92,7 +97,9 @@ function tcp2ws() {
 	console.log('forwarding port ' + argv.lport + ' to ' + argv.rhost);
 
 	var server = net.createServer(function(s) {
-		var ws = new ws_module(argv.rhost);
+		var ws = new ws_module(argv.rhost, {
+			rejectUnauthorized: !argv.insecure,
+		});
 		
 		var state = {
 			sReady : true,
@@ -106,11 +113,27 @@ function tcp2ws() {
 }
 
 function ws2tcp() {
-
 	console.log('proxy mode ws -> tcp');
 	console.log('forwarding port ' + argv.lport + ' to ' + argv.rhost);
 
-	wss = new ws_module.Server({port: argv.lport});
+	let options = null;
+
+	try {
+		options = {
+			'server': https.createServer({
+				'cert': fs.readFileSync(argv.cert),
+				'key': fs.readFileSync(argv.key),
+			}),
+		};
+
+		options['server'].listen(argv.lport);
+
+		console.log('Starting secure websocket server');
+	} catch(e) {
+		options = {port: argv.lport};
+	}
+
+	wss = new ws_module.Server(options);
 	wss.on('connection', function(ws) {
 		var addr_port = argv.rhost.split(':');
 		var s = net.connect(addr_port[1],addr_port[0]);
