@@ -97,6 +97,8 @@ function tcp2ws() {
 	console.log('forwarding port ' + argv.lport + ' to ' + argv.rhost);
 
 	var server = net.createServer(function(s) {
+		console.log('connecting to ' + argv.rhost);
+		
 		var ws = new ws_module(argv.rhost, {
 			rejectUnauthorized: !argv.insecure,
 		});
@@ -128,13 +130,15 @@ function ws2tcp() {
 
 		options['server'].listen(argv.lport);
 
-		console.log('Starting secure websocket server');
+		console.log('starting secure websocket server');
 	} catch(e) {
 		options = {port: argv.lport};
 	}
 
 	wss = new ws_module.Server(options);
 	wss.on('connection', function(ws) {
+		console.log('connecting to ' + argv.rhost);
+		
 		var addr_port = argv.rhost.split(':');
 		var s = net.connect(addr_port[1],addr_port[0]);
 		
@@ -146,7 +150,6 @@ function ws2tcp() {
 		};
 		initSocketCallbacks(state,ws,s);
 	});
-
 }
 
 if(argv.method == 'tcp2ws') {
